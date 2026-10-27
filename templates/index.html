@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Spark Tracker</title>
+  <meta name="theme-color" content="#0f766e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Spark Tracker">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/static/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1 id="page-title">Spark Tracker</h1>
+  </header>
+
+  <main>
+    <!-- ============ HOME ============ -->
+    <section id="tab-home" class="tab active">
+      <div class="card hero">
+        <div class="hero-label">This week</div>
+        <div class="hero-value" id="week-gross">$0</div>
+        <div class="goal" id="week-goal-wrap" hidden>
+          <div class="goal-bar"><div class="goal-fill" id="week-goal-fill"></div></div>
+          <div class="goal-text" id="week-goal-text"></div>
+        </div>
+        <div class="hero-stats" id="week-stats"></div>
+      </div>
+
+      <div id="home-form"></div>
+
+      <div class="card mt">
+        <h2>Recent shifts</h2>
+        <ul class="list" id="recent-list"></ul>
+      </div>
+    </section>
+
+    <!-- ============ LOG ============ -->
+    <section id="tab-log" class="tab">
+      <div class="period-nav" data-for="log"></div>
+      <div class="summary-strip" id="log-summary"></div>
+      <div class="row-actions">
+        <button class="btn ghost" id="btn-log-add-shift">+ Shift</button>
+        <button class="btn ghost" id="btn-log-add-bonus">+ Bonus / incentive</button>
+      </div>
+      <div id="log-list"></div>
+    </section>
+
+    <!-- ============ EXPENSES ============ -->
+    <section id="tab-expenses" class="tab">
+      <div class="period-nav" data-for="expenses"></div>
+      <div class="summary-strip" id="expense-summary"></div>
+      <form class="card" id="fuel-form" autocomplete="off">
+        <h2>Gas price &amp; MPG</h2>
+        <p class="hint" id="fuel-current"></p>
+        <label>Fill-up date<input type="date" id="fuel-date" required></label>
+        <div class="grid2">
+          <label>$/gallon<input type="number" inputmode="decimal" step="0.001" id="fuel-price" required placeholder="3.199"></label>
+          <label>Avg MPG<input type="number" inputmode="decimal" step="0.1" id="fuel-mpg" required placeholder="24.5"></label>
+        </div>
+        <button type="submit" class="btn primary full">Save Fill-up</button>
+        <ul class="list" id="fuel-list"></ul>
+      </form>
+      <form class="card" id="expense-form" autocomplete="off">
+        <h2>Add expense</h2>
+        <div class="grid2">
+          <label>Date<input type="date" id="exp-date" required></label>
+          <label>Amount<input type="number" inputmode="decimal" step="0.01" id="exp-amount" required placeholder="0.00"></label>
+        </div>
+        <label>Category<select id="exp-category"></select></label>
+        <label>Note<input type="text" id="exp-desc" placeholder="optional"></label>
+        <p class="hint" id="exp-hint"></p>
+        <button type="submit" class="btn primary full">Add Expense</button>
+      </form>
+      <ul class="list card" id="expense-list"></ul>
+    </section>
+
+    <!-- ============ STATS ============ -->
+    <section id="tab-stats" class="tab">
+      <div class="period-nav" data-for="stats"></div>
+      <div class="kpis" id="stats-kpis"></div>
+      <div class="card">
+        <h2>Earnings</h2>
+        <div class="chart-wrap"><canvas id="chart-earnings"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Taxes (estimate)</h2>
+        <table class="tax-table" id="tax-table"></table>
+        <p class="hint">Estimates only, not tax advice. Uses the IRS standard mileage rate, so gas and repairs aren't deducted separately. Confirm with a tax pro.</p>
+      </div>
+      <div class="card">
+        <h2>Offer types</h2>
+        <table class="data-table" id="type-table"></table>
+      </div>
+      <div class="card">
+        <h2>Best days</h2>
+        <table class="data-table" id="weekday-table"></table>
+      </div>
+      <div class="card">
+        <h2>Top stores</h2>
+        <table class="data-table" id="store-table"></table>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section id="tab-settings" class="tab">
+      <form class="card" id="settings-form">
+        <h2>Goals & taxes</h2>
+        <label>Weekly earnings goal ($)<input type="number" inputmode="decimal" step="1" id="set-goal"></label>
+        <label>Income tax set-aside (% of profit)
+          <input type="number" inputmode="decimal" step="0.5" id="set-income-tax">
+        </label>
+        <p class="hint">Self-employment tax (15.3% × 92.35% of profit) is added on top automatically.</p>
+        <label>Week starts on
+          <select id="set-week-start">
+            <option value="0">Monday</option><option value="1">Tuesday</option><option value="2">Wednesday</option>
+            <option value="3">Thursday</option><option value="4">Friday</option><option value="5">Saturday</option>
+            <option value="6">Sunday</option>
+          </select>
+        </label>
+        <label>Business purpose (mileage log)<input type="text" id="set-purpose"></label>
+
+        <h2 class="mt">IRS mileage rates ($/mile)</h2>
+        <div id="rate-rows"></div>
+        <button type="button" class="btn ghost" id="btn-add-rate">+ Add year</button>
+        <button type="submit" class="btn primary full mt">Save Settings</button>
+      </form>
+
+      <div class="card">
+        <h2>Export</h2>
+        <label>Tax year<select id="export-year"></select></label>
+        <div class="export-grid">
+          <a class="btn ghost" data-export="mileage">Mileage log CSV</a>
+          <a class="btn ghost" data-export="income">Income CSV</a>
+          <a class="btn ghost" data-export="expenses">Expenses CSV</a>
+          <a class="btn ghost" href="/export/backup.db">Full backup (.db)</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button data-tab="home" class="active"><span>🏠</span>Home</button>
+    <button data-tab="log"><span>📋</span>Log</button>
+    <button data-tab="expenses"><span>⛽</span>Expenses</button>
+    <button data-tab="stats"><span>📊</span>Stats</button>
+    <button data-tab="settings"><span>⚙️</span>Settings</button>
+  </nav>
+
+  <!-- Shared modal -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h2 id="modal-title"></h2>
+        <button class="icon-btn" id="modal-close" aria-label="Close">✕</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+  <datalist id="store-list"></datalist>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

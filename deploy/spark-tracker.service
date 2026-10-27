@@ -1,0 +1,12 @@
+[Unit]
+Description=Spark Tracker (Flask)
+After=network.target
+
+[Service]
+User=chris
+WorkingDirectory=/home/chris/spark-tracker
+ExecStart=/home/chris/spark-tracker/venv/bin/python3 app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+{
+  "name": "Spark Tracker",
+  "short_name": "Spark Tracker",
+  "description": "Income and mileage tracker for Spark delivery drivers",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f3f5f7",
+  "theme_color": "#0f766e",
+  "icons": [
+    { "src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
